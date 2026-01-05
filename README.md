@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -56,37 +57,32 @@
 
 <body>
 
-  <h1>Proyecto Matrimonio:fase de financiamiento 💸❤️</h1>
+  <h1>Proyecto Matrimonio: fase de financiamiento 💸❤️</h1>
 
   <p>
-    Elige un regalo y escribe tu nombre para que no se repita.
+    Elige un regalo y confirma tu elección.  
+    <br>Los regalos ya elegidos no estarán disponibles.
   </p>
 
   <ul>
 
-    <!-- REGALO 1 -->
     <li id="vasos">
       <strong>Juego de vasos</strong><br>
       <span id="vasos-nombre"></span><br>
-
       <input type="text" id="vasos-input" placeholder="Tu nombre"><br>
       <button onclick="elegirRegalo('vasos')">Elegir</button>
     </li>
 
-    <!-- REGALO 2 -->
     <li id="licuadora">
       <strong>Licuadora</strong><br>
       <span id="licuadora-nombre"></span><br>
-
       <input type="text" id="licuadora-input" placeholder="Tu nombre"><br>
       <button onclick="elegirRegalo('licuadora')">Elegir</button>
     </li>
 
-    <!-- REGALO 3 -->
     <li id="sartenes">
       <strong>Juego de sartenes</strong><br>
       <span id="sartenes-nombre"></span><br>
-
       <input type="text" id="sartenes-input" placeholder="Tu nombre"><br>
       <button onclick="elegirRegalo('sartenes')">Elegir</button>
     </li>
@@ -106,8 +102,7 @@
       projectId: "despedida-ba71a",
       storageBucket: "despedida-ba71a.firebasestorage.app",
       messagingSenderId: "30414791076",
-      appId: "1:30414791076:web:08d0d7494477ca5f912131",
-      measurementId: "G-GY9J0H7BW8"
+      appId: "1:30414791076:web:08d0d7494477ca5f912131"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -122,36 +117,3 @@
         alert("Por favor escribe tu nombre");
         return;
       }
-
-      set(ref(db, "regalos/" + id), {
-        nombre: nombre
-      });
-    };
-
-    // Escuchar cambios en tiempo real
-    onValue(ref(db, "regalos"), (snapshot) => {
-      const data = snapshot.val() || {};
-
-      // Reset visual
-      document.querySelectorAll("li").forEach(li => {
-        li.classList.remove("bloqueado");
-        const span = li.querySelector("span");
-        if (span) span.innerText = "";
-      });
-
-      // Aplicar datos
-      for (let id in data) {
-        const li = document.getElementById(id);
-        const span = document.getElementById(id + "-nombre");
-
-        if (li && span) {
-          span.innerText = "Elegido por: " + data[id].nombre;
-          span.className = "elegido";
-          li.classList.add("bloqueado");
-        }
-      }
-    });
-  </script>
-
-</body>
-</html>
