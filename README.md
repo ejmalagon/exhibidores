@@ -57,7 +57,7 @@
 
   <h1>Proyecto Matrimonio: fase de financiamiento 💸❤️</h1>
 
-  <p>Elige un regalo. Los ya seleccionados no estarán disponibles.</p>
+  <p>Elige un regalo Para Santiago y Kathleen. Los ya seleccionados no estarán disponibles.</p>
 
   <ul id="listaRegalos"></ul>
 
