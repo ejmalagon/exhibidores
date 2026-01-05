@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -12,20 +11,20 @@
       padding: 20px;
     }
 
-    h1, h2, p {
+    h1, p {
       text-align: center;
     }
 
     ul {
       list-style: none;
       padding: 0;
-      max-width: 600px;
+      max-width: 700px;
       margin: auto;
     }
 
     li {
       background: white;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
       padding: 15px;
       border-radius: 8px;
     }
@@ -47,7 +46,6 @@
       cursor: pointer;
     }
 
-    /* Cuando está elegido */
     .bloqueado input,
     .bloqueado button {
       display: none;
@@ -59,35 +57,9 @@
 
   <h1>Proyecto Matrimonio: fase de financiamiento 💸❤️</h1>
 
-  <p>
-    Elige un regalo y confirma tu elección.  
-    <br>Los regalos ya elegidos no estarán disponibles.
-  </p>
+  <p>Elige un regalo. Los ya seleccionados no estarán disponibles.</p>
 
-  <ul>
-
-    <li id="vasos">
-      <strong>Juego de vasos</strong><br>
-      <span id="vasos-nombre"></span><br>
-      <input type="text" id="vasos-input" placeholder="Tu nombre"><br>
-      <button onclick="elegirRegalo('vasos')">Elegir</button>
-    </li>
-
-    <li id="licuadora">
-      <strong>Licuadora</strong><br>
-      <span id="licuadora-nombre"></span><br>
-      <input type="text" id="licuadora-input" placeholder="Tu nombre"><br>
-      <button onclick="elegirRegalo('licuadora')">Elegir</button>
-    </li>
-
-    <li id="sartenes">
-      <strong>Juego de sartenes</strong><br>
-      <span id="sartenes-nombre"></span><br>
-      <input type="text" id="sartenes-input" placeholder="Tu nombre"><br>
-      <button onclick="elegirRegalo('sartenes')">Elegir</button>
-    </li>
-
-  </ul>
+  <ul id="listaRegalos"></ul>
 
   <!-- 🔥 FIREBASE -->
   <script type="module">
@@ -108,12 +80,105 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    // 📝 LISTA DE REGALOS
+    const regalos = [
+      "Juego de ollas y limpiones",
+      "Refractarias",
+      "Cuchillos",
+      "Cucharones",
+      "Vasos",
+      "Pocillos",
+      "Exprimidor de limón",
+      "2 mugs",
+      "Pela papas",
+      "Frascos de especias",
+      "Rallador",
+      "Delantal de cocina",
+      "Porta vasos",
+      "Individuales de mesa",
+      "Escoba, trapero y recogedor",
+      "Azucarero y salero",
+      "Bandeja",
+      "Ensaladera",
+      "Porta retratos",
+      "Juego de copas",
+      "Caneca de basura",
+      "Organizadores (plástico o tela)",
+      "Almohadas",
+      "Toallas para cuerpo",
+      "Jabonera",
+      "Olleta para chocolate",
+      "Molinillo",
+      "Caldero para arroz",
+      "Juego de porta alimentos",
+      "Juego de sartenes",
+      "Coladores",
+      "Cesta de ropa",
+      "Juego de cubiertos",
+      "Frascos para arroz, café y granos",
+      "Jarra para jugo",
+      "Tabla para picar",
+      "Set de utensilios de cocina",
+      "Tupper herméticos",
+      "Papelera para baño",
+      "Ganchos para clóset",
+      "Abrebotellas y sacacorchos"
+    ];
+
+    const lista = document.getElementById("listaRegalos");
+
+    // Crear HTML dinámicamente
+    regalos.forEach((nombre, index) => {
+      const id = "regalo" + index;
+
+      const li = document.createElement("li");
+      li.id = id;
+
+      li.innerHTML = `
+        <strong>${nombre}</strong><br>
+        <span id="${id}-estado"></span><br>
+        <input type="text" id="${id}-input" placeholder="Tu nombre"><br>
+        <button onclick="elegirRegalo('${id}')">Elegir</button>
+      `;
+
+      lista.appendChild(li);
+    });
+
     // Elegir regalo
     window.elegirRegalo = function(id) {
       const input = document.getElementById(id + "-input");
       const nombre = input.value.trim();
 
-      if (nombre === "") {
+      if (!nombre) {
         alert("Por favor escribe tu nombre");
         return;
       }
+
+      set(ref(db, "regalos/" + id), { nombre });
+    };
+
+    // Escuchar Firebase
+    onValue(ref(db, "regalos"), (snapshot) => {
+      const data = snapshot.val() || {};
+
+      document.querySelectorAll("li").forEach(li => {
+        li.classList.remove("bloqueado");
+        const span = li.querySelector("span");
+        if (span) span.innerText = "";
+      });
+
+      for (let id in data) {
+        const li = document.getElementById(id);
+        const span = document.getElementById(id + "-estado");
+
+        if (li && span) {
+          span.innerText = "Regalo elegido ✅";
+          span.className = "elegido";
+          li.classList.add("bloqueado");
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
