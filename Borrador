@@ -1,0 +1,102 @@
+ject.keys(grupos).forEach(dia=>{
+
+const tituloDia=document.createElement("h2");
+tituloDia.innerText=dia;
+contenedor.appendChild(tituloDia);
+
+Object.keys(grupos[dia]).forEach(punto=>{
+
+const titulo=document.createElement("h3");
+titulo.innerText=punto;
+contenedor.appendChild(titulo);
+
+grupos[dia][punto].forEach(t=>{
+
+const div=document.createElement("div");
+div.className="turno";
+
+const ocupacion = ocupados[t.index] ? ocupados[t.index].length : 0;
+
+div.innerText = t.hora + " ("+ocupacion+"/3)";
+
+if(ocupacion===3){
+div.style.background="#c8e6c9";
+div.classList.add("ocupado");
+}
+
+else if(ocupacion===2){
+div.style.background="#c8e6c9";
+div.onclick=()=>abrirModal(t.index,t);
+}
+
+else if(ocupacion===1){
+div.style.background="#fff9c4";
+div.onclick=()=>abrirModal(t.index,t);
+}
+
+else{
+div.style.background="#ffcdd2";
+div.onclick=()=>abrirModal(t.index,t);
+}
+
+contenedor.appendChild(div);
+
+});
+
+});
+
+});
+
+});
+
+}
+
+function abrirModal(index,turno){
+turnoSeleccionado=index;
+document.getElementById("turnoSeleccionadoTexto").innerText=
+`${turno.dia} - ${turno.punto} - ${turno.hora}`;
+document.getElementById("nombreInput").value="";
+document.getElementById("turnoModal").style.display="block";
+}
+
+function cerrarModal(){
+document.getElementById("turnoModal").style.display="none";
+}
+
+document.getElementById("confirmarBtn").onclick=()=>{
+
+const nombre=document.getElementById("nombreInput").value.trim();
+if(!nombre) return alert("Escribe el nombre");
+
+const refTurno=ref(db,`turnosOcupados/${turnoSeleccionado}`);
+
+get(refTurno).then(snap=>{
+
+let lista=snap.val() || [];
+
+if(!Array.isArray(lista)) lista=[lista];
+
+if(lista.length>=3){
+alert("Turno lleno");
+cerrarModal();
+return;
+}
+
+lista.push(nombre);
+
+set(refTurno,lista).then(()=>{
+cerrarModal();
+});
+
+});
+
+};
+
+document.getElementById("cancelarBtn").onclick=cerrarModal;
+
+onValue(ref(db,"turnosOcupados"),cargarTurnos);
+
+</script>
+
+</body>
+</html>
