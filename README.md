@@ -12,7 +12,12 @@ body {
   text-align: center;
 }
 
-h2 { margin-top:40px; }
+h2 {
+  margin-top: 60px;
+  background: #e8f5e9;
+  padding: 10px;
+  border-radius: 8px;
+}
 
 h3 {
   width: 100%;
@@ -43,6 +48,13 @@ h3 {
 .turno.ocupado {
   background: #c8e6c9;
   cursor: not-allowed;
+}
+
+.nombres {
+  font-size: 12px;
+  margin-top: 6px;
+  font-weight: normal;
+  text-align: left;
 }
 
 .modal {
@@ -169,25 +181,28 @@ grupos[dia][punto].forEach(t=>{
 const div=document.createElement("div");
 div.className="turno";
 
-const ocupacion=ocupados[t.index]?ocupados[t.index].length:0;
+const lista = ocupados[t.index] || [];
+const ocupacion = lista.length;
 
-div.innerText=t.hora+" ("+ocupacion+"/3)";
+div.innerHTML = `
+${t.hora} (${ocupacion}/3)
+<div class="nombres">
+${lista.join("<br>")}
+</div>
+`;
 
 if(ocupacion===3){
 div.style.background="#c8e6c9";
 div.classList.add("ocupado");
 }
-
 else if(ocupacion===2){
 div.style.background="#c8e6c9";
 div.onclick=()=>abrirModal(t.index,t);
 }
-
 else if(ocupacion===1){
 div.style.background="#fff9c4";
 div.onclick=()=>abrirModal(t.index,t);
 }
-
 else{
 div.style.background="#ffcdd2";
 div.onclick=()=>abrirModal(t.index,t);
