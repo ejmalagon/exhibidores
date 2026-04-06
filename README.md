@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -11,9 +12,7 @@ body {
   text-align: center;
 }
 
-h2{
-  margin-top:40px;
-}
+h2 { margin-top:40px; }
 
 h3 {
   width: 100%;
@@ -36,16 +35,13 @@ h3 {
   padding: 12px;
   width: 180px;
   border-radius: 10px;
-  background: #ffffff;
   border: 2px solid #ddd;
   cursor: pointer;
-  transition: all 0.25s ease;
   font-weight: bold;
 }
 
 .turno.ocupado {
   background: #c8e6c9;
-  border-color: #2e7d32;
   cursor: not-allowed;
 }
 
@@ -77,14 +73,8 @@ button {
   cursor: pointer;
 }
 
-#confirmarBtn {
-  background: #2e7d32;
-  color: white;
-}
-
-#cancelarBtn {
-  background: #ccc;
-}
+#confirmarBtn { background:#2e7d32; color:white; }
+#cancelarBtn { background:#ccc; }
 </style>
 </head>
 
@@ -109,13 +99,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase
 import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "TU API KEY",
-  authDomain: "TU AUTH",
-  databaseURL: "TU DB",
-  projectId: "TU ID",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: ""
+  apiKey: "AIzaSyCPDLePibPdmmQdDxQJmPWHc-mhEylVgG4",
+  authDomain: "turnos-semanales.firebaseapp.com",
+  databaseURL: "https://turnos-semanales-default-rtdb.firebaseio.com",
+  projectId: "turnos-semanales",
+  storageBucket: "turnos-semanales.firebasestorage.app",
+  messagingSenderId: "1097727159040",
+  appId: "1:1097727159040:web:c2ba55472ea3563e65e1e5"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -143,11 +133,11 @@ dias.forEach(dia=>{
   });
 });
 
-let turnoSeleccionado = null;
+let turnoSeleccionado=null;
 
 function cargarTurnos(){
 
-const contenedor = document.getElementById("turnos");
+const contenedor=document.getElementById("turnos");
 contenedor.innerHTML="";
 
 const grupos={};
@@ -160,7 +150,7 @@ turnos.forEach((t,i)=>{
 
 get(ref(db,"turnosOcupados")).then(snapshot=>{
 
-const ocupados = snapshot.val() || {};
+const ocupados=snapshot.val()||{};
 
 Object.keys(grupos).forEach(dia=>{
 
@@ -179,9 +169,9 @@ grupos[dia][punto].forEach(t=>{
 const div=document.createElement("div");
 div.className="turno";
 
-const ocupacion = ocupados[t.index] ? ocupados[t.index].length : 0;
+const ocupacion=ocupados[t.index]?ocupados[t.index].length:0;
 
-div.innerText = t.hora + " ("+ocupacion+"/3)";
+div.innerText=t.hora+" ("+ocupacion+"/3)";
 
 if(ocupacion===3){
 div.style.background="#c8e6c9";
@@ -236,7 +226,7 @@ const refTurno=ref(db,`turnosOcupados/${turnoSeleccionado}`);
 
 get(refTurno).then(snap=>{
 
-let lista=snap.val() || [];
+let lista=snap.val()||[];
 
 if(!Array.isArray(lista)) lista=[lista];
 
