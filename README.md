@@ -1,184 +1,267 @@
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Proyecto Matrimonio: fase de financiamiento</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      padding: 20px;
-    }
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  padding: 15px;
+  text-align: center;
+}
 
-    h1, p {
-      text-align: center;
-    }
+h2{
+  margin-top:40px;
+}
 
-    ul {
-      list-style: none;
-      padding: 0;
-      max-width: 700px;
-      margin: auto;
-    }
+h3 {
+  width: 100%;
+  text-align: left;
+  max-width: 1000px;
+  margin: 20px auto 10px;
+  color: #2e7d32;
+}
 
-    li {
-      background: white;
-      margin-bottom: 12px;
-      padding: 15px;
-      border-radius: 8px;
-    }
+#turnos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 1000px;
+  margin: auto;
+}
 
-    .elegido {
-      color: green;
-      font-weight: bold;
-    }
+.turno {
+  margin: 8px;
+  padding: 12px;
+  width: 180px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 2px solid #ddd;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-weight: bold;
+}
 
-    input {
-      padding: 6px;
-      margin-top: 5px;
-      width: 65%;
-    }
+.turno.ocupado {
+  background: #c8e6c9;
+  border-color: #2e7d32;
+  cursor: not-allowed;
+}
 
-    button {
-      padding: 6px 10px;
-      margin-top: 5px;
-      cursor: pointer;
-    }
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+}
 
-    .bloqueado input,
-    .bloqueado button {
-      display: none;
-    }
-  </style>
+.modal-content {
+  background: white;
+  margin: 15% auto;
+  padding: 20px;
+  width: 320px;
+  border-radius: 12px;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0;
+}
+
+button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#confirmarBtn {
+  background: #2e7d32;
+  color: white;
+}
+
+#cancelarBtn {
+  background: #ccc;
+}
+</style>
 </head>
 
 <body>
 
-  <h1>Proyecto Matrimonio: fase de financiamiento 💸❤️</h1>
+<h1>Inscripción de Turnos</h1>
 
-  <p>Elige un regalo Para Santiago y Kathleen. Los ya seleccionados no estarán disponibles.</p>
+<div id="turnos"></div>
 
-  <ul id="listaRegalos"></ul>
+<div id="turnoModal" class="modal">
+  <div class="modal-content">
+    <h3>Confirmar turno</h3>
+    <p id="turnoSeleccionadoTexto"></p>
+    <input type="text" id="nombreInput" placeholder="Nombre">
+    <button id="confirmarBtn">Confirmar</button>
+    <button id="cancelarBtn">Cancelar</button>
+  </div>
+</div>
 
-  <!-- 🔥 FIREBASE -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, onValue }
-      from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBBJwB7goplMb2WJpBvJU5rsvoueD84glg",
-      authDomain: "despedida-ba71a.firebaseapp.com",
-      databaseURL: "https://despedida-ba71a-default-rtdb.firebaseio.com",
-      projectId: "despedida-ba71a",
-      storageBucket: "despedida-ba71a.firebasestorage.app",
-      messagingSenderId: "30414791076",
-      appId: "1:30414791076:web:08d0d7494477ca5f912131"
-    };
+const firebaseConfig = {
+  apiKey: "TU API KEY",
+  authDomain: "TU AUTH",
+  databaseURL: "TU DB",
+  projectId: "TU ID",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: ""
+};
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-    // 📝 LISTA DE REGALOS
-    const regalos = [
-      "Juego de ollas y limpiones",
-      "Refractarias",
-      "Cuchillos",
-      "Cucharones",
-      "Vasos",
-      "Pocillos",
-      "Exprimidor de limón",
-      "2 mugs",
-      "Pela papas",
-      "Frascos de especias",
-      "Rallador",
-      "Delantal de cocina",
-      "Porta vasos",
-      "Individuales de mesa",
-      "Escoba, trapero y recogedor",
-      "Azucarero y salero",
-      "Bandeja",
-      "Ensaladera",
-      "Porta retratos",
-      "Juego de copas",
-      "Caneca de basura",
-      "Organizadores (plástico o tela)",
-      "Almohadas",
-      "Toallas para cuerpo",
-      "Jabonera",
-      "Olleta para chocolate",
-      "Molinillo",
-      "Caldero para arroz",
-      "Juego de porta alimentos",
-      "Juego de sartenes",
-      "Coladores",
-      "Cesta de ropa",
-      "Juego de cubiertos",
-      "Frascos para arroz, café y granos",
-      "Jarra para jugo",
-      "Tabla para picar",
-      "Set de utensilios de cocina",
-      "Tupper herméticos",
-      "Papelera para baño",
-      "Ganchos para clóset",
-      "Abrebotellas y sacacorchos"
-    ];
+const dias = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+const puntos = ["Tibabuyes","Afidro","Yaiti"];
 
-    const lista = document.getElementById("listaRegalos");
+const horas = [
+"07:00 - 09:00 a.m.",
+"09:00 - 11:00 a.m.",
+"11:00 - 01:00 p.m.",
+"01:00 - 03:00 p.m.",
+"03:00 - 05:00 p.m.",
+"05:00 - 07:00 p.m."
+];
 
-    // Crear HTML dinámicamente
-    regalos.forEach((nombre, index) => {
-      const id = "regalo" + index;
+const turnos = [];
 
-      const li = document.createElement("li");
-      li.id = id;
-
-      li.innerHTML = `
-        <strong>${nombre}</strong><br>
-        <span id="${id}-estado"></span><br>
-        <input type="text" id="${id}-input" placeholder="Tu nombre"><br>
-        <button onclick="elegirRegalo('${id}')">Elegir</button>
-      `;
-
-      lista.appendChild(li);
+dias.forEach(dia=>{
+  puntos.forEach(punto=>{
+    horas.forEach(hora=>{
+      turnos.push({dia,punto,hora});
     });
+  });
+});
 
-    // Elegir regalo
-    window.elegirRegalo = function(id) {
-      const input = document.getElementById(id + "-input");
-      const nombre = input.value.trim();
+let turnoSeleccionado = null;
 
-      if (!nombre) {
-        alert("Por favor escribe tu nombre");
-        return;
-      }
+function cargarTurnos(){
 
-      set(ref(db, "regalos/" + id), { nombre });
-    };
+const contenedor = document.getElementById("turnos");
+contenedor.innerHTML="";
 
-    // Escuchar Firebase
-    onValue(ref(db, "regalos"), (snapshot) => {
-      const data = snapshot.val() || {};
+const grupos={};
 
-      document.querySelectorAll("li").forEach(li => {
-        li.classList.remove("bloqueado");
-        const span = li.querySelector("span");
-        if (span) span.innerText = "";
-      });
+turnos.forEach((t,i)=>{
+  if(!grupos[t.dia]) grupos[t.dia]={};
+  if(!grupos[t.dia][t.punto]) grupos[t.dia][t.punto]=[];
+  grupos[t.dia][t.punto].push({...t,index:i});
+});
 
-      for (let id in data) {
-        const li = document.getElementById(id);
-        const span = document.getElementById(id + "-estado");
+get(ref(db,"turnosOcupados")).then(snapshot=>{
 
-        if (li && span) {
-          span.innerText = "Regalo elegido ✅";
-          span.className = "elegido";
-          li.classList.add("bloqueado");
-        }
-      }
-    });
-  </script>
+const ocupados = snapshot.val() || {};
+
+Object.keys(grupos).forEach(dia=>{
+
+const tituloDia=document.createElement("h2");
+tituloDia.innerText=dia;
+contenedor.appendChild(tituloDia);
+
+Object.keys(grupos[dia]).forEach(punto=>{
+
+const titulo=document.createElement("h3");
+titulo.innerText=punto;
+contenedor.appendChild(titulo);
+
+grupos[dia][punto].forEach(t=>{
+
+const div=document.createElement("div");
+div.className="turno";
+
+const ocupacion = ocupados[t.index] ? ocupados[t.index].length : 0;
+
+div.innerText = t.hora + " ("+ocupacion+"/3)";
+
+if(ocupacion===3){
+div.style.background="#c8e6c9";
+div.classList.add("ocupado");
+}
+
+else if(ocupacion===2){
+div.style.background="#c8e6c9";
+div.onclick=()=>abrirModal(t.index,t);
+}
+
+else if(ocupacion===1){
+div.style.background="#fff9c4";
+div.onclick=()=>abrirModal(t.index,t);
+}
+
+else{
+div.style.background="#ffcdd2";
+div.onclick=()=>abrirModal(t.index,t);
+}
+
+contenedor.appendChild(div);
+
+});
+
+});
+
+});
+
+});
+
+}
+
+function abrirModal(index,turno){
+turnoSeleccionado=index;
+document.getElementById("turnoSeleccionadoTexto").innerText=
+`${turno.dia} - ${turno.punto} - ${turno.hora}`;
+document.getElementById("nombreInput").value="";
+document.getElementById("turnoModal").style.display="block";
+}
+
+function cerrarModal(){
+document.getElementById("turnoModal").style.display="none";
+}
+
+document.getElementById("confirmarBtn").onclick=()=>{
+
+const nombre=document.getElementById("nombreInput").value.trim();
+if(!nombre) return alert("Escribe el nombre");
+
+const refTurno=ref(db,`turnosOcupados/${turnoSeleccionado}`);
+
+get(refTurno).then(snap=>{
+
+let lista=snap.val() || [];
+
+if(!Array.isArray(lista)) lista=[lista];
+
+if(lista.length>=3){
+alert("Turno lleno");
+cerrarModal();
+return;
+}
+
+lista.push(nombre);
+
+set(refTurno,lista).then(()=>{
+cerrarModal();
+});
+
+});
+
+};
+
+document.getElementById("cancelarBtn").onclick=cerrarModal;
+
+onValue(ref(db,"turnosOcupados"),cargarTurnos);
+
+</script>
 
 </body>
 </html>
