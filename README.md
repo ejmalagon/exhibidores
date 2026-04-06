@@ -92,9 +92,6 @@ button {
 </head>
 
 <body>
-
-<h1>Inscripción de Turnos</h1>
-
 <div id="turnos" class="acordeon"></div>
 
 <div id="turnoModal" class="modal">
