@@ -2,8 +2,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Turnos Semanales</title>
-
+<title>Programación semanales de los exhibidores</title>
+    <p class="subtitulo">Selecciona el punto y el horario de tu preferencia. Escribe sólo tu nombre.</p>
+<p>Por favor leer: <a href="https://wol.jw.org/es/wol/d/r4/lp-s/202015126?q=exhibidor&p=doc">Cómo predicar con los exhibidores de publicaciones</a></p>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
